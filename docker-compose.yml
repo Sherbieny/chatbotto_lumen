@@ -21,7 +21,7 @@ services:
       - "8000:8000"
     environment:
       APP_ENV: local
-      APP_KEY: base64:FvZbGD3zL1gz/aTB0ZVf6nz0JsWRdW5DSL5LwzWacxQ= # Generate with `php artisan key:generate`
+      APP_KEY: base64:FvZbGD3zL1gz/aTB0ZVf6nz0JsWRdW5DSL5LwzWacxQ= # Generate with `php -r "echo base64_encode(random_bytes(32));"`
       APP_DEBUG: true
       APP_URL: http://localhost:8000
       LOG_CHANNEL: stack
