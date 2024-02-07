@@ -11,5 +11,8 @@ else
     echo "Existing Lumen project found."
 fi
 
+echo "Running migrations..."
+php artisan migrate
+
 # Then proceed to start the PHP server, or any other command you wish to run
 exec php -S 0.0.0.0:8000 -t public
