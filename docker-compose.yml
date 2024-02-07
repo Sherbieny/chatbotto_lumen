@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  front:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/front/Dockerfile
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+
+  back:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/back/Dockerfile
+    volumes:
+      - ./back:/app
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_KEY: base64:FvZbGD3zL1gz/aTB0ZVf6nz0JsWRdW5DSL5LwzWacxQ= # Generate with `php artisan key:generate`
+      APP_DEBUG: true
+      APP_URL: http://localhost:8000
+      LOG_CHANNEL: stack
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: chatbotto
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: chatbotto
+    ports:
+      - "5432:5432"

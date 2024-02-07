@@ -1,0 +1,57 @@
+.suggestionContainer {
+    border: 1px solid #ccc;
+    color: #333;
+    background-color: #f8f8f8;
+    overflow-y: auto;
+    height: 30%;
+    /* Increase the max height */
+    margin-bottom: 1%;
+    border-radius: 10px;
+    /* Add border radius */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* Add box shadow */
+}
+
+.suggestionsList {
+    list-style-type: none;
+    padding: 0;
+    margin: -5px !important;
+    overflow: auto;
+}
+
+.suggestionsHeader {
+    display: flex;
+    justify-content: flex-end;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.suggestionsPanel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 20%;
+    height: 100vh;
+    overflow: auto;
+    background-color: #f8f8f8;
+    border-left: 1px solid #ccc;
+    padding: 20px;
+}
+
+.questionIcon {
+    color: #333;
+    /* Match the text color */
+}
+
+@media screen and (max-width: 768px) {
+    .suggestionsPanel {
+        width: 100%;
+        height: 50vh;
+        bottom: 0;
+        top: auto;
+        border-top: 1px solid #ccc;
+        border-left: none;
+    }
+
+}

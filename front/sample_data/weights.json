@@ -1,0 +1,268 @@
+[{
+        "key": "A-c",
+        "value": 0,
+        "label": "Adjective-Common",
+        "labelJP": "形容詞",
+        "pos": "形容詞,自立"
+    },
+    {
+        "key": "A-dp",
+        "value": 0,
+        "label": "Adjective-Dependent",
+        "labelJP": "形容詞-非自立可能",
+        "pos": "形容詞,非自立"
+    },
+    {
+        "key": "C",
+        "value": 0,
+        "label": "Conjunction",
+        "labelJP": "接続詞",
+        "pos": "接続詞"
+    },
+    {
+        "key": "D",
+        "value": 0,
+        "label": "Pronoun",
+        "labelJP": "代名詞",
+        "pos": "代名詞"
+    },
+    {
+        "key": "E",
+        "value": 2,
+        "label": "English word",
+        "labelJP": "英単語",
+        "pos": null
+    },
+    {
+        "key": "F",
+        "value": 0,
+        "label": "Adverb",
+        "labelJP": "副詞",
+        "pos": "副詞"
+    },
+    {
+        "key": "I-c",
+        "value": 0,
+        "label": "Interjection-Common",
+        "labelJP": "感動詞-一般",
+        "pos": "感動詞"
+    },
+    {
+        "key": "J-c",
+        "value": 0,
+        "label": "Adjectival Noun-Common",
+        "labelJP": "形状詞-一般",
+        "pos": "名詞,形容動詞語幹"
+    },
+    {
+        "key": "J-tari",
+        "value": 0,
+        "label": "Adjectival Noun-Tari",
+        "labelJP": "形状詞-タリ",
+        "pos": null
+
+    },
+    {
+        "key": "J-xs",
+        "value": 0,
+        "label": "Adjectival Noun-AuxVerb stem",
+        "labelJP": "形状詞-助動詞語幹",
+        "pos": null
+    },
+    {
+        "key": "M-aa",
+        "value": 0,
+        "label": "Auxiliary sign-AA",
+        "labelJP": "補助記号-AA",
+        "pos": "記号,アルファベット"
+    },
+    {
+        "key": "M-c",
+        "value": 0,
+        "label": "Auxiliary sign-Common",
+        "labelJP": "補助記号-一般",
+        "pos": "記号,一般"
+    },
+    {
+        "key": "M-cp",
+        "value": 0,
+        "label": "Auxiliary sign-Open Parenthesis",
+        "labelJP": "補助記号-括弧閉",
+        "pos": "記号,括弧閉"
+    },
+    {
+        "key": "M-op",
+        "value": 0,
+        "label": "Auxiliary sign-Close Parenthesis",
+        "labelJP": "補助記号-括弧開",
+        "pos": "記号,括弧開"
+    },
+    {
+        "key": "M-p",
+        "value": 0,
+        "label": "Auxiliary sign-Period",
+        "labelJP": "補助記号-句点",
+        "pos": "記号,句点"
+    },
+    {
+        "key": "N-n",
+        "value": 3,
+        "label": "Noun-Noun",
+        "labelJP": "名詞-名詞的",
+        "pos": "名詞,普通名詞,一般"
+    },
+    {
+        "key": "N-nc",
+        "value": 3,
+        "label": "Noun-Common Noun",
+        "labelJP": "名詞-普通名詞",
+        "pos": "名詞,普通名詞,一般"
+    },
+    {
+        "key": "N-pn",
+        "value": 3,
+        "label": "Noun-Proper Noun",
+        "labelJP": "名詞-固有名詞",
+        "pos": "名詞,固有名詞,一般"
+    },
+    {
+        "key": "N-xs",
+        "value": 0,
+        "label": "Noun-AuxVerb stem",
+        "labelJP": "名詞-助動詞語幹",
+        "pos": "名詞,非自立,助動詞語幹"
+    },
+    {
+        "key": "O",
+        "value": 0,
+        "label": "Others",
+        "labelJP": "その他",
+        "pos": null
+    },
+    {
+        "key": "P",
+        "value": 0,
+        "label": "Prefix",
+        "labelJP": "接頭辞",
+        "pos": "接頭詞"
+    },
+    {
+        "key": "P-fj",
+        "value": 0,
+        "label": "Particle-Adverbial",
+        "labelJP": "助詞-副助詞",
+        "pos": "助詞,副助詞"
+    },
+    {
+        "key": "P-jj",
+        "value": 0,
+        "label": "Particle-Phrasal",
+        "labelJP": "助詞-準体助詞",
+        "pos": "助詞,連体化"
+    },
+    {
+        "key": "P-k",
+        "value": 0,
+        "label": "Particle-Case Marking",
+        "labelJP": "助詞-格助詞",
+        "pos": "助詞,格助詞"
+    },
+    {
+        "key": "P-rj",
+        "value": 0,
+        "label": "Particle-Binding",
+        "labelJP": "助詞-係助詞",
+        "pos": "助詞,係助詞"
+    },
+    {
+        "key": "P-sj",
+        "value": 0,
+        "label": "Particle-Conjunctive",
+        "labelJP": "助詞-接続助詞",
+        "pos": "助詞,接続助詞"
+    },
+    {
+        "key": "Q-a",
+        "value": 0,
+        "label": "Suffix-Adjective",
+        "labelJP": "接尾辞-形容詞的",
+        "pos": "接尾詞,形容動詞語幹"
+    },
+    {
+        "key": "Q-j",
+        "value": 0,
+        "label": "Suffix-Adjectival Noun",
+        "labelJP": "接尾辞-形状詞的",
+        "pos": "接尾詞,名詞的"
+    },
+    {
+        "key": "Q-n",
+        "value": 0,
+        "label": "Suffix-Noun",
+        "labelJP": "接尾辞-名詞的",
+        "pos": "接尾詞,名詞的"
+    },
+    {
+        "key": "Q-v",
+        "value": 0,
+        "label": "Suffix-Verb",
+        "labelJP": "接尾辞-動詞的",
+        "pos": "接尾詞,動詞的"
+    },
+    {
+        "key": "R",
+        "value": 0,
+        "label": "Adnominal adjective",
+        "labelJP": "連体詞",
+        "pos": "連体詞"
+    },
+    {
+        "key": "S-c",
+        "value": 0,
+        "label": "Sign-Common",
+        "labelJP": "記号-一般",
+        "pos": "記号,一般"
+    },
+    {
+        "key": "S-l",
+        "value": 0,
+        "label": "Sign-Letter",
+        "labelJP": "記号-文字",
+        "pos": "記号,文字"
+    },
+    {
+        "key": "U",
+        "value": 0,
+        "label": "URL",
+        "labelJP": "URL",
+        "pos": null
+    },
+    {
+        "key": "V-c",
+        "value": 2,
+        "label": "Verb-Common",
+        "labelJP": "動詞-一般",
+        "pos": "動詞,自立"
+    },
+    {
+        "key": "V-dp",
+        "value": 0,
+        "label": "Verb-Dependent",
+        "labelJP": "動詞-非自立可能",
+        "pos": "動詞,非自立"
+    },
+    {
+        "key": "W",
+        "value": 0,
+        "label": "Whitespace",
+        "labelJP": "空白",
+        "pos": null
+    },
+    {
+        "key": "X",
+        "value": 0,
+        "label": "AuxVerb",
+        "labelJP": "助動詞",
+        "pos": "助動詞"
+    }
+]

@@ -1,0 +1,64 @@
+.chatContainer {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
+}
+
+.chatStack {
+    height: 72vh;
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+}
+
+.suggestionsPoppedOut .chatMessagesList {
+    max-height: 100%;
+    /* Adjust as needed */
+}
+
+.inputField {
+    flex-shrink: 0;
+    /* Prevent the input field from shrinking */
+}
+
+.chatMessagesList {
+    overflow: auto;
+    margin-bottom: 10px;
+    height: 60%;
+}
+
+.chatInput {
+    margin-right: 10px;
+    margin-top: 2%;
+}
+
+.sendButton {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.sendButton:hover {
+    background-color: #0056b3;
+}
+
+.inputFieldUp {
+    transform: translateY(-20px);
+    transition: transform 0.3s ease-in-out;
+}
+
+@media (max-width: 600px) {
+    .chatContainer {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+}
