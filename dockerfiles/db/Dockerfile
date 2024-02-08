@@ -1,13 +1,20 @@
 FROM postgres:latest
 
-RUN apt update
-RUN apt install -y libmecab-dev libmecab2 mecab-ipadic-utf8 mecab-utils libmecab-perl libtext-mecab-perl mecab mecab-jumandic-utf8 wget make gcc postgresql-server-dev-all
+RUN apt-get update && apt-get install -y wget ca-certificates lsb-release
 
-RUN wget https://ftp.postgresql.org/pub/projects/pgFoundry/textsearch-ja/textsearch_ja/9.0.0/textsearch_ja-9.0.0.tar.gz
-RUN tar zxf textsearch_ja-9.0.0.tar.gz
-RUN cd textsearch_ja-9.0.0 && make USE_PGXS=1 && make USE_PGXS=1 install
+RUN wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+RUN dpkg -i apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
 
-RUN echo shared_preload_libraries='textsearch_ja' >> /var/lib/postgresql/data/postgresql.conf
+RUN wget https://packages.groonga.org/debian/groonga-apt-source-latest-$(lsb_release --codename --short).deb
+RUN dpkg -i groonga-apt-source-latest-$(lsb_release --codename --short).deb
+
+RUN apt-get update
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release --codename --short)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+RUN apt-get update
+RUN apt-get install -y postgresql-16-pgdg-pgroonga groonga-tokenizer-mecab
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 EXPOSE 5432
