@@ -35,7 +35,9 @@ services:
       - db
 
   db:
-    image: postgres:13
+    build:
+      context: .
+      dockerfile: ./dockerfiles/db/Dockerfile
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
@@ -44,3 +46,4 @@ services:
       - "5432:5432"
     volumes:
       - ./db-init-scripts:/docker-entrypoint-initdb.d
+      - ./db-data:/var/lib/postgresql/data
