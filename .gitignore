@@ -53,3 +53,6 @@
 ./back/public/storage
 ./back/*.log
 ./back/bootstrap/cache/
+
+# SQLTools sql files
+*.sql
