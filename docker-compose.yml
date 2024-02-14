@@ -15,6 +15,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/back/Dockerfile
+      args:
+        # Set in os environment using `export XDEBUG_CLIENT_HOST=$(ip addr show docker0 | grep -Po 'inet \K[\d.]+')` for linux and WSL2
+        # or `export XDEBUG_CLIENT_HOST=host.docker.internal` for mac and windows Docker Desktop
+        XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST}
     volumes:
       - ./back:/app
     ports:
