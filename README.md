@@ -39,5 +39,17 @@ docker-compose up -d --build
     ```
 
 
+## Configuration
+
+1. Update the docker-compose.yml back service environment variables
+
+    a. APP_ENV - set to `local` for development and `production` for production
+    b. APP_URL - set to `http://localhost:8000` for development and `https://yourdomain.com` for production
+    c. APP_DEBUG - set to `true` for development and `false` for production
+
+2. In front directory rename the .env.local.tmp to .env.local and update the following environment variables
+
+    a. `NEXT_PUBLIC_API_URL` - set to `http://localhost:8000` for development and `https://yourdomain.com` for production
+
 
 
