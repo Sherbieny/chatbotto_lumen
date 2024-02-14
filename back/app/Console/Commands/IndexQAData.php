@@ -28,6 +28,9 @@ class IndexQAData extends Command
      */
     public function handle()
     {
+        DB::statement('DROP INDEX IF EXISTS qa_prompt_index');
+        DB::statement('DROP INDEX IF EXISTS qa_answer_index');
+
         DB::statement('CREATE INDEX qa_prompt_index ON qa USING pgroonga (prompt) WITH (tokenizer=\'TokenMecab\')');
         DB::statement('CREATE INDEX qa_answer_index ON qa USING pgroonga (answer) WITH (tokenizer=\'TokenMecab\')');
 
