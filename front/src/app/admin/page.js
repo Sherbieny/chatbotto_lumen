@@ -25,47 +25,51 @@ export default function AdminPage() {
 
     // File upload
 
-    const handleFileChange = (event) => {
-        const uploadedFile = event.target.files[0];
-        if (uploadedFile) {
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                const fileContent = event.target.result;
-                const response = await fetch('/api/qa?action=processJaquadData', {
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                setSeverity('error');
+                setMessage('データのアップロード中にエラーが発生しました');
+                setOpen(true);
+            } else {
+                setSeverity('success');
+                setMessage('データが正常にアップロードされました');
+                setOpen(true);
+
+                // Start the indexing process
+                setSeverity('info');
+                setMessage('インデックス作成プロセスを開始します...');
+                setOpen(true);
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/process`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: fileContent,
+                }).then((response) => {
+                    if (response.ok) {
+                        setSeverity('success');
+                        setMessage('インデックス作成プロセスが正常に終了しました.');
+                        setOpen(true);
+                    } else {
+                        setSeverity('error');
+                        setMessage('インデックス作成プロセス中にエラーが発生しました.');
+                        setOpen(true);
+                    }
                 });
-
-                if (!response.ok) {
-                    setSeverity('error');
-                    setMessage('データの処理中にエラーが発生しました');
-                    setOpen(true);
-                    return;
-                }
-
-                // The processed data is now in the response
-                const qaData = await response.json();
-                downloadProcessedData(qaData);
             }
 
-            reader.readAsText(uploadedFile);
-        };
-    };
-
-    const downloadProcessedData = (qaData) => {
-        const fileName = 'qa_data.json';
-        const json = JSON.stringify(qaData);
-        const blob = new Blob([json], { type: 'application/json' });
-        const href = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = href;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        } catch (err) {
+            console.error(err);
+            setSeverity('error');
+            setMessage('データのアップロード中にエラーが発生しました');
+            setOpen(true);
+        }
     };
 
     const VisuallyHiddenInput = styled('input')({
@@ -177,7 +181,7 @@ export default function AdminPage() {
                 <Grid item xs={12} sm={4}>
                     <Button fullWidth component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                         JaQuAD データセット（JSON）を処理す
-                        <VisuallyHiddenInput type="file" accept='.json' onChange={handleFileChange} />
+                        <VisuallyHiddenInput type="file" accept='.json' onChange={handleFileUpload} />
                     </Button>
                 </Grid>
             </Grid>

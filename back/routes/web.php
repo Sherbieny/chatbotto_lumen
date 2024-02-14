@@ -24,4 +24,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('/message', 'MessageController@sendMessage');
     $router->get('/settings', 'SettingsController@getSettings');
     $router->post('/settings', 'SettingsController@saveSettings');
+    $router->post('/upload', 'UploadController@upload');
+    $router->post('/process', 'UploadController@process');
 });
