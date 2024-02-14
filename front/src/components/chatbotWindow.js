@@ -18,14 +18,12 @@ import {
 } from '@mui/material';
 import Suggestions from './suggestions';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Tokenizer from '../../src/app/lib/tokenizer';
 import { debounce } from 'lodash';
 
 
 export default function ChatWindow() {
     const [userInput, setUserInput] = useState('');
     const [chatHistory, setChatHistory] = useState([{ user: 'bot', text: 'こんにちは！本日はどのようにお手伝いできますか？' }]);
-    const [tokenizer, setTokenizer] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [hasSuggestions, setHasSuggestions] = useState(false);
@@ -46,19 +44,22 @@ export default function ChatWindow() {
 
     const handleInputChange = (event) => {
         setUserInput(event.target.value);
-        debouncedFetchSuggestions(tokenizer, event.target.value);
+        debouncedFetchSuggestions(event.target.value);
     };
 
     const getBestAnswer = async (message) => {
-        if (!tokenizer) return;
-
         setIsLoading(true);
-        const tokenizedInput = tokenizer.filterTokens(tokenizer.tokenize(message));
         let answer = 'その質問に対する答えはわかりません。';
-        if (tokenizedInput.length > 0) {
-            const response = await fetch('/api/qa?action=findBestMatch&query=' + encodeURIComponent(JSON.stringify(tokenizedInput)));
+        if (message.length > 0) {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: message }),
+            });
             const data = await response.json();
-            answer = await tokenizer.findBestMatch(data, tokenizedInput)
+            answer = data.message;
         }
 
         setChatHistory(prevChatHistory => [...prevChatHistory, { user: 'user', text: message }, { user: 'bot', text: answer }]);
@@ -77,26 +78,14 @@ export default function ChatWindow() {
         setUserInput('');
     };
 
-    const fetchSuggestions = useCallback(async (tokenizer, userInput) => {
-        if (!tokenizer || userInput.length <= 3) return;
+    const fetchSuggestions = useCallback(async (userInput) => {
+        if (userInput.length < 1) return;
         try {
             //console.log('Fetching suggestions...');
             setIsLoading(true);
-            const tokenizedInput = tokenizer.filterTokens(tokenizer.tokenize(userInput));
-            if (tokenizedInput.length === 0) {
-                setHasSuggestions(false);
-                setIsLoading(false);
 
-                setSeverity('error');
-                setMessage('入力されたテキストにトークンが含まれていません');
-                setOpen(true);
-
-                return setSuggestions([]);
-            }
-
-            const response = await fetch('/api/qa?action=getSuggestions&query=' + encodeURIComponent(JSON.stringify(tokenizedInput)));
-            const data = await response.json();
-            const filteredQA = await tokenizer.filterSuggestions(data, tokenizedInput)
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suggestions?query=` + encodeURIComponent(userInput));
+            const filteredQA = await response.json();
 
             if (filteredQA.length === 0) {
                 setHasSuggestions(false);
@@ -123,26 +112,14 @@ export default function ChatWindow() {
     }, []);
 
     const debouncedFetchSuggestions = useCallback(
-        debounce(async (tokenizer, userInput) => {
-            if (!tokenizer || userInput.length <= 3) return;
+        debounce(async (userInput) => {
+            if (userInput.length < 1) return;
             try {
                 console.log('Fetching suggestions...');
                 setIsLoading(true);
-                const tokenizedInput = tokenizer.filterTokens(tokenizer.tokenize(userInput));
-                if (tokenizedInput.length === 0) {
-                    setHasSuggestions(false);
-                    setIsLoading(false);
-
-                    setSeverity('error');
-                    setMessage('入力されたテキストにトークンが含まれていません');
-                    setOpen(true);
-
-                    return setSuggestions([]);
-                }
-
-                const response = await fetch('/api/qa?action=getSuggestions&query=' + encodeURIComponent(JSON.stringify(tokenizedInput)));
-                const data = await response.json();
-                const filteredQA = await tokenizer.filterSuggestions(data, tokenizedInput)
+                console.log('backend url', process.env.NEXT_PUBLIC_API_URL);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/suggestions?query=` + encodeURIComponent(userInput));
+                const filteredQA = await response.json();
 
                 if (filteredQA.length === 0) {
                     setHasSuggestions(false);
@@ -171,23 +148,12 @@ export default function ChatWindow() {
     );
 
     useEffect(() => {
-        if (!tokenizer) {
-            const initTokenizer = async () => {
-                setIsLoading(true);
-                const myTokenizer = new Tokenizer();
-                await myTokenizer.init();
-                setTokenizer(myTokenizer);
-                setIsLoading(false);
-            };
-
-            initTokenizer();
-        }
 
         if (lastMessageRef.current) {
             lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
         }
 
-    }, [userInput, tokenizer, chatHistory]);
+    }, [userInput, chatHistory]);
 
     return (
         <Container id='chatContainer' maxWidth="sm" className={styles.chatContainer}>
