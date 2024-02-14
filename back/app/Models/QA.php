@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class QA extends Model
 {
@@ -27,7 +26,7 @@ class QA extends Model
      * @param  string  $query
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function search($query, $columns = ['prompt'], $limit = 10)
+    public static function search($query, $columns = ['prompt'])
     {
         // Build the search query
         $search_query = static::query();
@@ -35,7 +34,7 @@ class QA extends Model
             $search_query->orWhereRaw("$column &@ ?", [$query]);
         }
 
-        return $search_query->take($limit)->get()->map(function ($item) {
+        return $search_query->take(Setting::getSuggestionsCount())->get()->map(function ($item) {
             return ['prompt' => $item->prompt, 'answer' => $item->answer];
         })->toArray();
     }

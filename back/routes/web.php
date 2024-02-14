@@ -22,4 +22,6 @@ $router->get('/', function () use ($router) {
 $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/suggestions', 'SuggestionsController@getSuggestions');
     $router->post('/message', 'MessageController@sendMessage');
+    $router->get('/settings', 'SettingsController@getSettings');
+    $router->post('/settings', 'SettingsController@saveSettings');
 });

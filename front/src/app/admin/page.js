@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, Box, Button, TextField, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer, TablePagination, Container, Divider, Typography, Snackbar, Alert, Grid } from '@mui/material';
+import { Link, Box, Button, TextField, Container, Divider, Typography, Snackbar, Alert, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -9,85 +9,6 @@ import { Refresh } from '@mui/icons-material';
 import Image from 'next/image';
 
 export default function AdminPage() {
-    // Pagination
-
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(25);
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
-
-    // Weight Map
-    const [weightMap, setWeightMap] = useState([]);
-
-    const loadWeights = useCallback(async () => {
-        try {
-            const response = await fetch('/api/weights?action=getTokenWeights');
-            const data = await response.json();
-            setWeightMap(data);
-        } catch (err) {
-            console.log(err);
-        }
-    }, [setWeightMap]);
-
-    const handleWeightChange = (key, event) => {
-        const updatedWeight = event.target.value;
-        setWeightMap((prevWeightMap) =>
-            prevWeightMap.map((weight) =>
-                weight.key === key ? { ...weight, value: updatedWeight } : weight
-            )
-        );
-    };
-
-    const handleRefreshClick = async () => {
-        try {
-            const response = await fetch('/api/weights?action=getTokenWeights');
-            const data = await response.json();
-            setWeightMap(data);
-
-            setMessage('ウェイトの更新に成功しました');
-            setSeverity('success');
-            setOpen(true);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-
-    // Function to handle weight map save to the db
-    const handleSaveWeights = () => {
-        const saveWeights = async () => {
-            try {
-                const response = await fetch('/api/weights?action=updateTokenWeights', {
-                    method: 'POST',
-                    body: JSON.stringify(weightMap),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const jsonResponse = await response.json();
-
-                if (jsonResponse.success) {
-                    setSeverity('success');
-                    setMessage('ウェイトが正常に保存されました');
-                    setOpen(true);
-                } else {
-                    setSeverity('error');
-                    setMessage('ウェイトの保存中にエラーが発生しました');
-                    setOpen(true);
-                }
-
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        saveWeights();
-    };
 
     // Snackbar
     const [open, setOpen] = useState(false);
@@ -172,7 +93,7 @@ export default function AdminPage() {
 
     const handleSaveSettings = async () => {
         try {
-            const response = await fetch('/api/settings?action=saveSettings', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/settings`, {
                 method: 'POST',
                 body: JSON.stringify(settings),
                 headers: {
@@ -207,7 +128,7 @@ export default function AdminPage() {
             // Add more settings here
         ];
         try {
-            const response = await fetch('/api/settings?action=getSettings');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/settings`);
             const data = await response.json();
 
             if (data.length === 0) {
@@ -227,9 +148,8 @@ export default function AdminPage() {
     // Effects
 
     useEffect(() => {
-        loadWeights();
         loadSettings();
-    }, [loadWeights, loadSettings]);
+    }, [loadSettings]);
 
     return (
         <Container maxWidth="xl">
@@ -260,11 +180,6 @@ export default function AdminPage() {
                         <VisuallyHiddenInput type="file" accept='.json' onChange={handleFileChange} />
                     </Button>
                 </Grid>
-                <Grid item xs={12} sm={4}>
-                    <Button fullWidth component="label" variant="contained" onClick={handleRefreshClick} startIcon={<Refresh />}>
-                        リフレッシュする
-                    </Button>
-                </Grid>
             </Grid>
 
 
@@ -272,85 +187,30 @@ export default function AdminPage() {
 
             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                 <Typography sx={{ width: '100%', textAlign: 'center', mb: 2 }} variant="h6" gutterBottom>
-                    日本語品詞リストと対応する BCCWJ の品詞名
+                    設定
                 </Typography>
-                <Paper sx={{ width: '100%', overflow: 'hidden', mb: 2 }} elevation={3}>
-                    {/* Weight Map Table */}
-                    <TableContainer sx={{ maxHeight: 440 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>ID</TableCell>
-                                    <TableCell>ラベル (EN)</TableCell>
-                                    <TableCell>ラベル (JP)</TableCell>
-                                    <TableCell>重味</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {weightMap.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((weight) => (
-                                    <TableRow key={weight.key}>
-                                        <TableCell>{weight.key}</TableCell>
-                                        <TableCell>{weight.label}</TableCell>
-                                        <TableCell>{weight.labelJP}</TableCell>
-                                        <TableCell>
-                                            <TextField
-                                                type="number"
-                                                value={weight.value}
-                                                onChange={(event) => handleWeightChange(weight.key, event)}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[10, 25, 100]}
-                        component="div"
-                        count={weightMap.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button variant="contained" onClick={handleSaveWeights}>
-                        保存する
+                {settings.map((setting, index) => (
+                    <Box border={1} borderColor="divider" borderRadius={1} p={1} mb={1} key={index}>
+                        <Grid container item xs={12} alignItems="center">
+                            <Grid item xs={10} sm={8}>
+                                <Typography variant="h5" align='center'>{setting.label}</Typography>
+                            </Grid>
+                            <Grid item xs={2} sm={4}>
+                                <TextField
+                                    type="number"
+                                    value={setting.value}
+                                    onChange={(event) => handleSettingChange(setting.key, event.target.value)}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
+                    </Box>
+                ))}
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                    <Button variant="contained" onClick={handleSaveSettings}>
+                        設定を保存
                     </Button>
                 </Box>
-
-                <Divider sx={{ mt: 2, mb: 2 }}></Divider>
-
-                <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                    <Typography sx={{ width: '100%', textAlign: 'center', mb: 2 }} variant="h6" gutterBottom>
-                        設定
-                    </Typography>
-                    {settings.map((setting, index) => (
-                        <Box border={1} borderColor="divider" borderRadius={1} p={1} mb={1} key={index}>
-                            <Grid container item xs={12} alignItems="center">
-                                <Grid item xs={10} sm={8}>
-                                    <Typography variant="h5" align='center'>{setting.label}</Typography>
-                                </Grid>
-                                <Grid item xs={2} sm={4}>
-                                    <TextField
-                                        type="number"
-                                        value={setting.value}
-                                        onChange={(event) => handleSettingChange(setting.key, event.target.value)}
-                                        fullWidth
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    ))}
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                        <Button variant="contained" onClick={handleSaveSettings}>
-                            設定を保存
-                        </Button>
-                    </Box>
-                </Box>
-
-                <Divider sx={{ mt: 2, mb: 2 }}></Divider>
             </Box>
         </Container>
     );
