@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\QAJsonFormat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
@@ -12,7 +14,7 @@ class UploadController extends Controller
     public function upload(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:json|max:2048',
+            'file' => ['required', 'mimes:json', 'max:2048', new QAJsonFormat()],
         ]);
 
         if ($validator->fails()) {
@@ -28,8 +30,8 @@ class UploadController extends Controller
 
     public function process()
     {
-        Artisan::call('import:qa-data');
-        Artisan::call('index:qa-data');
+        Queue::push(new \App\Jobs\ImportQADataJob());
+        Queue::push(new \App\Jobs\IndexQADataJob());
 
         return response()->json(['success' => true, 'message' => 'Indexing process has started. Please wait a few minutes.']);
     }
