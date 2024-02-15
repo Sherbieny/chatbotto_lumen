@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libpq-dev \
     vim \
+    cron \
     && docker-php-ext-install pdo_pgsql mbstring xml \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -36,6 +37,14 @@ EXPOSE 8000
 # Copy php.ini file into Docker image
 COPY ./dockerfiles/back/php.ini /usr/local/etc/php/php.ini
 
+# Add the cron job
+ADD ./dockerfiles/back/cronjob /etc/cron.d/cronjob
+RUN chmod 0644 /etc/cron.d/cronjob
+RUN crontab /etc/cron.d/cronjob
+
+# Copy entrypoint.sh into Docker image and make it executable
 COPY ./dockerfiles/back/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# Run the entrypoint script when the Docker container starts
 CMD ["/entrypoint.sh"]

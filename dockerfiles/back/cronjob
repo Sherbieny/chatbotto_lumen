@@ -1,0 +1,3 @@
+@reboot cd /app && php artisan queue:listen >> /dev/null 2>&1
+*/5 * * * * cd /app && php artisan queue:listen >> /dev/null 2>&1
+
