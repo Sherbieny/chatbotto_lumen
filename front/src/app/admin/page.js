@@ -46,15 +46,12 @@ export default function AdminPage() {
                 setOpen(true);
 
                 // Start the indexing process
-                setSeverity('info');
-                setMessage('インデックス作成プロセスを開始します...');
-                setOpen(true);
                 fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/process`, {
                     method: 'POST',
                 }).then((response) => {
                     if (response.ok) {
-                        setSeverity('success');
-                        setMessage('インデックス作成プロセスが正常に終了しました.');
+                        setSeverity('info');
+                        setMessage('インデックス作成プロセスを開始します - 約 10 分間お待ちください');
                         setOpen(true);
                     } else {
                         setSeverity('error');
