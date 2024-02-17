@@ -15,7 +15,7 @@ class ImportQAData extends Command
      *
      * @var string
      */
-    protected $signature = 'import:qa-data';
+    protected $signature = 'import:qa-data {--new-only : Import only the qa_data.json file}';
 
     /**
      * The console command description.
@@ -32,19 +32,14 @@ class ImportQAData extends Command
     public function handle()
     {
         Log::info('Starting import:qa-data command');
-        $filePath = base_path('sample_data/qa_data.json');
+        $dirPath = base_path('sample_data');
 
-        if (!File::exists($filePath)) {
-            $this->error("File not found: {$filePath}");
+        if (!File::isDirectory($dirPath)) {
+            $this->error("Directory not found: {$dirPath}");
             return 1;
         }
 
-        $data = json_decode(File::get($filePath), true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->error('Invalid JSON: ' . json_last_error_msg());
-            return 1;
-        }
+        $files = $this->option('new-only') ? [new \SplFileInfo($dirPath . '/qa_data.json')] : File::files($dirPath);
 
         // Start a database transaction
         DB::beginTransaction();
@@ -53,22 +48,40 @@ class ImportQAData extends Command
             // Create a temporary table
             DB::statement('CREATE TEMPORARY TABLE temp_qa AS SELECT * FROM qa WITH NO DATA');
 
-            // Create a new progress bar
-            $bar = $this->output->createProgressBar(count($data));
+            foreach ($files as $file) {
+                if ($file->getExtension() !== 'json') {
+                    continue;
+                }
 
-            // Import the data into the temporary table
-            foreach ($data as $item) {
-                DB::table('temp_qa')->insert([
-                    'prompt' => $item['prompt'],
-                    'answer' => $item['answer'],
-                ]);
+                $data = json_decode(file_get_contents($file->getPathname()), true);
 
-                // Advance the progress bar by one step
-                $bar->advance();
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $this->error('Invalid JSON in file ' . $file->getBasename() . ': ' . json_last_error_msg());
+                    return 1;
+                }
+
+                // Create a new progress bar
+                $bar = $this->output->createProgressBar(count($data));
+
+                // Import the data into the temporary table
+                foreach ($data as $item) {
+                    if (!isset($item['prompt'], $item['answer'])) {
+                        $this->error('Invalid data in file ' . $file->getBasename() . ': missing "prompt" or "answer"');
+                        return 1;
+                    }
+
+                    DB::table('temp_qa')->insert([
+                        'prompt' => $item['prompt'],
+                        'answer' => $item['answer'],
+                    ]);
+
+                    // Advance the progress bar by one step
+                    $bar->advance();
+                }
+
+                // Finish the progress bar
+                $bar->finish();
             }
-
-            // Finish the progress bar
-            $bar->finish();
 
             // Insert new records into the main table, excluding duplicates
             DB::statement('INSERT INTO qa (prompt, answer, created_at, updated_at)

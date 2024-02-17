@@ -13,6 +13,6 @@ class ImportQADataJob extends Job
      */
     public function handle()
     {
-        Artisan::call('import:qa-data');
+        Artisan::call('import:qa-data --new-only');
     }
 }
