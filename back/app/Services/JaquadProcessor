@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Services;
+
+class JaquadProcessor
+{
+    /**
+     * Validate the JSON data.
+     *
+     * @param  array  $jsonData
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function validateData(array $jsonData): void
+    {
+        if (!isset($jsonData['data'])) {
+            throw new \InvalidArgumentException('Invalid data: missing "data" property');
+        }
+
+        foreach ($jsonData['data'] as $index => $item) {
+            if (!isset($item['paragraphs'])) {
+                throw new \InvalidArgumentException("Invalid data: missing \"paragraphs\" property in data[{$index}]");
+            }
+
+            foreach ($item['paragraphs'] as $index => $paragraph) {
+                if (!isset($paragraph['qas'])) {
+                    throw new \InvalidArgumentException("Invalid data: missing \"qas\" property in paragraphs[{$index}]");
+                }
+
+                foreach ($paragraph['qas'] as $index => $qa) {
+                    if (!isset($qa['question'], $qa['answers'], $qa['answers'][0], $qa['answers'][0]['text'])) {
+                        throw new \InvalidArgumentException("Invalid data: missing \"question\" or \"answers\" property in qas[{$index}]");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Process the JSON data.
+     *
+     * @param  array  $jsonData
+     * @return array
+     */
+    public function processData(array $jsonData): array
+    {
+        $this->validateData($jsonData);
+
+        $qaData = [];
+
+        foreach ($jsonData['data'] as $item) {
+            foreach ($item['paragraphs'] as $paragraph) {
+                foreach ($paragraph['qas'] as $qa) {
+                    $qaData[] = [
+                        'prompt' => $qa['question'],
+                        'answer' => $qa['answers'][0]['text'],
+                    ];
+                }
+            }
+        }
+
+        return $qaData;
+    }
+}
