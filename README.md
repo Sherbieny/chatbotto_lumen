@@ -86,6 +86,40 @@
 
    a. デフォルトのスケジュールは 5 分ごとに実行されるように設定されています
 
+## API エンドポイント
+
+### GET /api/suggestions
+
+- ユーザーの入力に基づいて提案を取得します
+- パラメータ
+  - `query`: string
+
+### POST /api/message
+
+- チャットボットにメッセージを送信します
+- パラメータ
+  - `query`: string
+
+### GET /api/settings
+
+- チャットボットの設定を取得します
+
+### POST /api/settings
+
+- チャットボットの設定を更新します
+- パラメータ
+  - `settings`: object
+
+### POST /api/upload
+
+- qa テーブルデータをアップロードします
+- パラメータ
+  - `file`: file
+
+### POST /api/process
+
+- qa テーブルデータを処理します（インポートおよびインデックス）
+
 ## 使い方
 
 1. Docker コンテナを起動します
@@ -213,6 +247,40 @@ docker-compose up -d --build
 3. (optional) update dockerfiles/back/cronjob to set the CRON job schedule
 
    a. The default schedule is set to run every 5 minutes
+
+## API Endpoints
+
+### GET /api/suggestions
+
+- Get suggestions based on the user's input
+- Parameters
+  - `query`: string
+
+### POST /api/message
+
+- Send a message to the chatbot
+- Parameters
+  - `query`: string
+
+### GET /api/settings
+
+- Get the chatbot settings
+
+### POST /api/settings
+
+- Update the chatbot settings
+- Parameters
+  - `settings`: object
+
+### POST /api/upload
+
+- Upload the qa table data
+- Parameters
+  - `file`: file
+
+### POST /api/process
+
+- Process the qa table data (import and index)
 
 ## Usage
 
