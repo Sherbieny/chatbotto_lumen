@@ -1,165 +1,3 @@
-# チャットボット Lumen アプリケーション
-
-このプロジェクトは、Nextjs と Lumen を使用して構築されたルールベースのチャットボットアプリケーションです。pgroonga を使用して全文検索を行い、mecab を使用して日本語のトークン化を行います。チャットボットは、ユーザーの入力に基づいて提案を生成し、qa テーブルデータから直接質問に答えます。
-
-## 代替バージョン
-
-- [Chatbotto Nextjs Node Application](https://github.com/Sherbieny/chatbotto)
-- [Chatbotto Browser Application](https://github.com/Sherbieny/chatbotto_browser)
-
-## 特徴
-
-- ルールベースのチャットボット
-- 全文検索
-- 日本語のトークン化
-- Docker 化された開発環境
-- Nextjs フロントエンドと管理ダッシュボード
-- Lumen バックエンド API
-- Lumen コンソールコマンドを使用して qa テーブルデータをインポートおよびインデックスするための Lumen コンソールコマンド
-- 管理ダッシュボードからトリガーされた場合に Lumen コンソールコマンドを実行する CRON ジョブ
-- JaQuad データセットから抽出されたインポート用のサンプル qa テーブルデータ json ファイル
-- ChatGPT DALL-E によって生成された画像とアイコン
-
-## インストール
-
-1. リポジトリをクローンします
-2. OS 環境変数に `XDEBUG_CLIENT_HOST` を追加します
-
-   a. Linux または WSL2 の場合、次のように .bashrc または .zshrc に追加します `vim ~/.bashrc` または `vim ~/.zshrc`
-
-   ```bash
-   export XDEBUG_CLIENT_HOST=$(ip addr show docker0 | grep -Po 'inet \K[\d.]+')
-   ```
-
-   b. Windows、Docker Desktop を使用している Mac の場合、back サービスの docker-compose.yml ファイルの args: セクションに手動で `host.docker.internal` を追加します
-
-   ```yaml
-   args:
-     XDEBUG_CLIENT_HOST: host.docker.internal
-   ```
-
-3. プロジェクトのルートで次のコマンドを実行して Docker コンテナをビルドおよび起動します
-
-   ```bash
-   docker-compose up -d --build
-   ```
-
-4. `back` コンテナ（php-fpm/Debian）に SSH して、次のコマンドを実行して依存関係をインストールします
-
-   a. Composer 依存関係をインストールします
-
-   ```bash
-   composer install
-   ```
-
-   b. マイグレーション
-
-   ```bash
-   php artisan migrate
-   ```
-
-   c. qa テーブルデータをインポート（オプション）
-
-   ```bash
-   php artisan import:qa-data
-   ```
-
-   d. qa テーブルデータをインデックス化（オプション）
-
-   ```bash
-   php artisan index:qa-data
-   ```
-
-## 設定
-
-1. docker-compose.yml の back サービスの環境変数を更新します
-
-   a. APP_ENV - 開発環境の場合は `local` に設定し、本番環境の場合は `production` に設定します
-   b. APP_URL - 開発環境の場合は `http://localhost:8000` に設定し、本番環境の場合は `https://yourdomain.com` に設定します
-   c. APP_DEBUG - 開発環境の場合は `true` に設定し、本番環境の場合は `false` に設定します
-
-2. front ディレクトリで .env.local.tmp を .env.local にリネームし、次の環境変数を更新します
-
-   a. `NEXT_PUBLIC_API_URL` - 開発環境の場合は `http://localhost:8000` に設定し、本番環境の場合は `https://yourdomain.com` に設定します
-
-3. (オプション) dockerfiles/back/cronjob を更新して CRON ジョブのスケジュールを設定します
-
-   a. デフォルトのスケジュールは 5 分ごとに実行されるように設定されています
-
-## API エンドポイント
-
-### GET /api/suggestions
-
-- ユーザーの入力に基づいて提案を取得します
-- パラメータ
-  - `query`: string
-
-### POST /api/message
-
-- チャットボットにメッセージを送信します
-- パラメータ
-  - `query`: string
-
-### GET /api/settings
-
-- チャットボットの設定を取得します
-
-### POST /api/settings
-
-- チャットボットの設定を更新します
-- パラメータ
-  - `settings`: object
-
-### POST /api/upload
-
-- qa テーブルデータをアップロードします
-- パラメータ
-  - `file`: file
-
-### POST /api/process
-
-- qa テーブルデータを処理します（インポートおよびインデックス）
-
-## 使い方
-
-1. Docker コンテナを起動します
-
-```bash
-docker-compose start
-```
-
-2. ブラウザを開いて、`http://localhost:3000` に移動して、チャットボットアプリケーションにアクセスします
-
-3. タイプを開始して、チャットボットと対話し、提案から選択するか、直接質問をするかを選択します
-
-4. 歯車アイコンをクリックして、管理ダッシュボードにアクセスします
-
-5. 管理ダッシュボードを使用して、チャットボットの設定を管理し、qa テーブルデータをアップロードします
-   a. qa データのアップロード時に、CRON ジョブは lumen コンソールコマンドを実行して qa テーブルデータをインポートおよびインデックスします。CRON ジョブは 5 分ごとに実行されるように設定されています。
-
-## ツールとテクノロジー
-
-- [Nextjs](https://nextjs.org/)
-- [Lumen](https://lumen.laravel.com)
-- [pgroonga](https://pgroonga.github.io/)
-- [mecab](https://taku910.github.io/mecab/)
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [PopstgreSQL](https://www.postgresql.org/)
-- [VS Code](https://code.visualstudio.com/)
-- [Github Copilot](https://copilot.github.com/)
-- [Github Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)
-
-## 貢献
-
-プルリクエストは歓迎です。重大な変更を行う場合は、まず問題を開いて議論してください。
-
-## ライセンス
-
-[GLP-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
-
----
-
 # Chatbotto Lumen Application
 
 This project is a rule-based chatbot application built with Nextjs and Lumen. It uses pgroonga for full-text search and mecab for Japanese language tokenization. The chatbot produces suggestions based on the user's input and answers questions directly from the qa table data.
@@ -250,35 +88,30 @@ docker-compose up -d --build
 
 ## API Endpoints
 
-### GET /api/suggestions
+```bash
+# Get suggestions based on the user's input
+GET /api/suggestions
+# Parameters: query (string)
 
-- Get suggestions based on the user's input
-- Parameters
-  - `query`: string
+# Send a message to the chatbot
+POST /api/message
+# Parameters: query (string)
 
-### POST /api/message
+# Get the chatbot settings
+GET /api/settings
 
-- Send a message to the chatbot
-- Parameters
-  - `query`: string
+# Update the chatbot settings
+POST /api/settings
+# Parameters: settings (object)
 
-### GET /api/settings
+# Upload the qa table data
+POST /api/upload
+# Parameters: file (file)
 
-- Get the chatbot settings
+# Process the qa table data (import and index)
+POST /api/process
 
-### POST /api/settings
-
-- Update the chatbot settings
-- Parameters
-  - `settings`: object
-
-### POST /api/upload
-
-- Upload the qa table data
-- Parameters
-  - `file`: file
-
-### POST /api/process
+```
 
 - Process the qa table data (import and index)
 
@@ -317,5 +150,160 @@ docker-compose start
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
+
+[GLP-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
+
+---
+
+# チャットボット Lumen アプリケーション
+
+このプロジェクトは、Nextjs と Lumen を使用して構築されたルールベースのチャットボットアプリケーションです。pgroonga を使用して全文検索を行い、mecab を使用して日本語のトークン化を行います。チャットボットは、ユーザーの入力に基づいて提案を生成し、qa テーブルデータから直接質問に答えます。
+
+## 代替バージョン
+
+- [Chatbotto Nextjs Node Application](https://github.com/Sherbieny/chatbotto)
+- [Chatbotto Browser Application](https://github.com/Sherbieny/chatbotto_browser)
+
+## 特徴
+
+- ルールベースのチャットボット
+- 全文検索
+- 日本語のトークン化
+- Docker 化された開発環境
+- Nextjs フロントエンドと管理ダッシュボード
+- Lumen バックエンド API
+- Lumen コンソールコマンドを使用して qa テーブルデータをインポートおよびインデックスするための Lumen コンソールコマンド
+- 管理ダッシュボードからトリガーされた場合に Lumen コンソールコマンドを実行する CRON ジョブ
+- JaQuad データセットから抽出されたインポート用のサンプル qa テーブルデータ json ファイル
+- ChatGPT DALL-E によって生成された画像とアイコン
+
+## インストール
+
+1. リポジトリをクローンします
+2. OS 環境変数に `XDEBUG_CLIENT_HOST` を追加します
+
+   a. Linux または WSL2 の場合、次のように .bashrc または .zshrc に追加します `vim ~/.bashrc` または `vim ~/.zshrc`
+
+   ```bash
+   export XDEBUG_CLIENT_HOST=$(ip addr show docker0 | grep -Po 'inet \K[\d.]+')
+   ```
+
+   b. Windows、Docker Desktop を使用している Mac の場合、back サービスの docker-compose.yml ファイルの args: セクションに手動で `host.docker.internal` を追加します
+
+   ```yaml
+   args:
+     XDEBUG_CLIENT_HOST: host.docker.internal
+   ```
+
+3. プロジェクトのルートで次のコマンドを実行して Docker コンテナをビルドおよび起動します
+
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. `back` コンテナ（php-fpm/Debian）に SSH して、次のコマンドを実行して依存関係をインストールします
+
+   a. Composer 依存関係をインストールします
+
+   ```bash
+   composer install
+   ```
+
+   b. マイグレーション
+
+   ```bash
+   php artisan migrate
+   ```
+
+   c. qa テーブルデータをインポート（オプション）
+
+   ```bash
+   php artisan import:qa-data
+   ```
+
+   d. qa テーブルデータをインデックス化（オプション）
+
+   ```bash
+   php artisan index:qa-data
+   ```
+
+## 設定
+
+1. docker-compose.yml の back サービスの環境変数を更新します
+
+   a. APP_ENV - 開発環境の場合は `local` に設定し、本番環境の場合は `production` に設定します
+   b. APP_URL - 開発環境の場合は `http://localhost:8000` に設定し、本番環境の場合は `https://yourdomain.com` に設定します
+   c. APP_DEBUG - 開発環境の場合は `true` に設定し、本番環境の場合は `false` に設定します
+
+2. front ディレクトリで .env.local.tmp を .env.local にリネームし、次の環境変数を更新します
+
+   a. `NEXT_PUBLIC_API_URL` - 開発環境の場合は `http://localhost:8000` に設定し、本番環境の場合は `https://yourdomain.com` に設定します
+
+3. (オプション) dockerfiles/back/cronjob を更新して CRON ジョブのスケジュールを設定します
+
+   a. デフォルトのスケジュールは 5 分ごとに実行されるように設定されています
+
+## API エンドポイント
+
+```bash
+# ユーザーの入力に基づいて提案を取得します
+GET /api/suggestions
+# パラメータ: query (string)
+
+# チャットボットにメッセージを送信します
+POST /api/message
+# パラメータ: query (string)
+
+# チャットボットの設定を取得します
+GET /api/settings
+
+# チャットボットの設定を更新します
+POST /api/settings
+# パラメータ: settings (object)
+
+# qa テーブルデータをアップロードします
+POST /api/upload
+# パラメータ: file (file)
+
+# qa テーブルデータを処理します（インポートおよびインデックス）
+POST /api/process
+
+```
+
+## 使い方
+
+1. Docker コンテナを起動します
+
+```bash
+docker-compose start
+```
+
+2. ブラウザを開いて、`http://localhost:3000` に移動して、チャットボットアプリケーションにアクセスします
+
+3. タイプを開始して、チャットボットと対話し、提案から選択するか、直接質問をするかを選択します
+
+4. 歯車アイコンをクリックして、管理ダッシュボードにアクセスします
+
+5. 管理ダッシュボードを使用して、チャットボットの設定を管理し、qa テーブルデータをアップロードします
+   a. qa データのアップロード時に、CRON ジョブは lumen コンソールコマンドを実行して qa テーブルデータをインポートおよびインデックスします。CRON ジョブは 5 分ごとに実行されるように設定されています。
+
+## ツールとテクノロジー
+
+- [Nextjs](https://nextjs.org/)
+- [Lumen](https://lumen.laravel.com)
+- [pgroonga](https://pgroonga.github.io/)
+- [mecab](https://taku910.github.io/mecab/)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [PopstgreSQL](https://www.postgresql.org/)
+- [VS Code](https://code.visualstudio.com/)
+- [Github Copilot](https://copilot.github.com/)
+- [Github Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)
+
+## 貢献
+
+プルリクエストは歓迎です。重大な変更を行う場合は、まず問題を開いて議論してください。
+
+## ライセンス
 
 [GLP-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
